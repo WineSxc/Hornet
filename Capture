@@ -1,0 +1,49 @@
+#usr/bin/env python3
+import os, time, sys, colorama
+from colorama import Fore, Style
+
+YOURIP = '192.168.1.134'
+# change YOURIP to your IP unless you're fucking dumb and want to run the exploit against yourself from your own machine  
+class main():
+	def __init__(self):
+		pass
+		# add whatever you need on the init class perhaps imports here if your adding this into larger script
+	def Listen():
+		try:
+			os.system('rm AuditTrail.txt')
+		except:
+			pass
+		os.system('timeout 5 tshark -f "tcp or udp" -T fields -E separator=, -e ip.src >> AuditTrail.txt') # change .src to .dst if you want to see where you're sending shit
+		# oh yeh also change timeout depending on how often you wanna try exploit i would recomend every 60 seconds or so, dont wanna create a huge file
+		# also i cant be bothered to add a filter to the packet size do it yourself you lazy bastard - wine
+	def RemoveDupes():
+		try:
+			os.system('rm NoDupesAuditTrail.txt')
+		except:
+			print('CAUTION!: NoDupes file not found, assuming startup or manual removal of the NoDupes file')
+	
+		os.system('sort AuditTrail.txt | uniq >> NoDupesAuditTrail.txt')
+		os.system('rm AuditTrail.txt')
+		print('Verbose: AuditTrail file Removed (Hopefully)')
+
+	def Exploit():
+		os.system('perl wget.pl NoDupesAuditTrail.txt') # change to whatever exploit u wanna use fam / whatever command u run with a list to run the exploit 
+		# this gonna be where we run all the fun stuff from what we sniffed
+
+# The aim of the program is to listen for malicious packets at a certain size
+# program then attempts to exploit the malicious thingys
+
+main()
+print(Fore.RED + "ALERT" + Fore.GREEN + " STARTING LISTENER")
+print(Style.RESET_ALL)
+while True:
+	main.Listen()
+	print(Fore.GREEN + 'LISTENER COMPLETED, REMOVING DUPLICATES (WE ARE NOT LOGGING TEMPORARILY')
+	print(Style.RESET_ALL)
+	main.RemoveDupes()
+	print(Fore.RED + 'EXPLOITATION STARTING !!! EXPLOITATION STARTING')
+	main.Exploit()
+	print(Fore.BLUE + 'EXPLOITATION FINISHED: END OF NO LOGGING PHASE')
+	print(Style.RESET_ALL)
+# required module colorama
+# required file, well an exploit and this thats all you dumb cunt figure it out
